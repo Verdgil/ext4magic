@@ -3,6 +3,12 @@
  
 #include <ext2fs/ext2fs.h>
 
+#include <stdio.h>
+#include <setjmp.h>
+
+extern jmp_buf jump_buffer;
+
+void sigsegv_handler(int signum);
 
 
 errcode_t local_block_iterate3(ext2_filsys fs,
