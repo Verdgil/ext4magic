@@ -1,0 +1,437 @@
+{
+    "version": 2,
+    "warnings": [
+        {
+            "CodeCurrent": 722815491,
+            "CodeNext": 3403850832,
+            "CodePrev": 487835253,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _, _"
+        },
+        {
+            "CodeCurrent": 3403851472,
+            "CodeNext": 2337,
+            "CodePrev": 377836761,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 361406523,
+            "CodeNext": 3403853488,
+            "CodePrev": 2216498,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 45175875,
+            "CodeNext": 3403852592,
+            "CodePrev": 141876674,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _, _"
+        },
+        {
+            "CodeCurrent": 45175935,
+            "CodeNext": 3403851952,
+            "CodePrev": 566513618,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 45175829,
+            "CodeNext": 3403853328,
+            "CodePrev": 8866999,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 22587993,
+            "CodeNext": 3849409111,
+            "CodePrev": 975553439,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 3403853296,
+            "CodeNext": 2337,
+            "CodePrev": 188918331,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "journal.h",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "file_type.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 22588031,
+            "CodeNext": 3849408567,
+            "CodePrev": 3916813380,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 1780252272,
+            "CodeNext": 125,
+            "CodePrev": 125,
+            "ErrorCode": "V547",
+            "FileName": "ext4magic.c",
+            "Message": "Expression 'i_list' is always true."
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "imap_search.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 1703743044,
+            "CodeNext": 376032031,
+            "CodePrev": 5771449,
+            "ErrorCode": "V547",
+            "FileName": "recover.c",
+            "Message": "Expression 'helpname' is always true."
+        },
+        {
+            "CodeCurrent": 2922032149,
+            "CodeNext": 2337,
+            "CodePrev": 1118381990,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _, _"
+        },
+        {
+            "CodeCurrent": 22588283,
+            "CodeNext": 3849404535,
+            "CodePrev": 490192232,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 45176003,
+            "CodeNext": 3403850608,
+            "CodePrev": 283851875,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _, _"
+        },
+        {
+            "CodeCurrent": 549158300,
+            "CodeNext": 1359246095,
+            "CodePrev": 188269425,
+            "ErrorCode": "V547",
+            "FileName": "ext4magic.c",
+            "Message": "Expression 'journal_flag' is always true."
+        },
+        {
+            "CodeCurrent": 722815491,
+            "CodeNext": 3403850832,
+            "CodePrev": 487835253,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 2204384060,
+            "CodeNext": 10155009,
+            "CodePrev": 3373690729,
+            "ErrorCode": "V547",
+            "FileName": "ext4magic.c",
+            "Message": "Expression 'current_fs' is always true."
+        },
+        {
+            "CodeCurrent": 5765,
+            "CodeNext": 202717,
+            "CodePrev": 2570257284,
+            "ErrorCode": "V547",
+            "FileName": "magic_block_scan.c",
+            "Message": "Expression 'ea' is always true."
+        },
+        {
+            "CodeCurrent": 3250742921,
+            "CodeNext": 125,
+            "CodePrev": 125,
+            "ErrorCode": "V547",
+            "FileName": "magic_block_scan.c",
+            "Message": "Expression 'buf' is always true."
+        },
+        {
+            "CodeCurrent": 46504491,
+            "CodeNext": 39095355,
+            "CodePrev": 1267284205,
+            "ErrorCode": "V547",
+            "FileName": "ext4magic.c",
+            "Message": "Expression 'disaster' is always false."
+        },
+        {
+            "CodeCurrent": 22587965,
+            "CodeNext": 3849409559,
+            "CodePrev": 8867445,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 3403853360,
+            "CodeNext": 2337,
+            "CodePrev": 94458903,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _, _"
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "inode.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 90352017,
+            "CodeNext": 2512734046,
+            "CodePrev": 4435477,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "util.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "lookup_local.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "extent_db.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 3403857776,
+            "CodeNext": 2337,
+            "CodePrev": 2706715050,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _, _"
+        },
+        {
+            "CodeCurrent": 1742413387,
+            "CodeNext": 0,
+            "CodePrev": 3401808968,
+            "ErrorCode": "V547",
+            "FileName": "lookup_local.c",
+            "Message": "Expression 'ls.options & _x_' is always true."
+        },
+        {
+            "CodeCurrent": 3258450165,
+            "CodeNext": 6894774,
+            "CodePrev": 76062,
+            "ErrorCode": "V547",
+            "FileName": "ext4magic.c",
+            "Message": "Expression '!journal_flag' is always true."
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "ext4magic.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 46373,
+            "CodeNext": 5668465,
+            "CodePrev": 4702,
+            "ErrorCode": "V547",
+            "FileName": "lookup_local.c",
+            "Message": "Expression 'i_list' is always true."
+        },
+        {
+            "CodeCurrent": 3403850832,
+            "CodeNext": 2337,
+            "CodePrev": 94459163,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _, _"
+        },
+        {
+            "CodeCurrent": 3403850256,
+            "CodeNext": 2337,
+            "CodePrev": 3022685313,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 90351953,
+            "CodeNext": 2512735070,
+            "CodePrev": 17705461,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "recover.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 5771449,
+            "CodeNext": 353453,
+            "CodePrev": 4702,
+            "ErrorCode": "V547",
+            "FileName": "journal.c",
+            "Message": "Expression 'buf' is always true."
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "hard_link_stack.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 3403851088,
+            "CodeNext": 2337,
+            "CodePrev": 2236883605,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 1518411531,
+            "CodeNext": 141285,
+            "CodePrev": 1335096594,
+            "ErrorCode": "V547",
+            "FileName": "magic_block_scan.c",
+            "Message": "Expression 'ea' is always true."
+        },
+        {
+            "CodeCurrent": 361407457,
+            "CodeNext": 2512737054,
+            "CodePrev": 35493865,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _"
+        },
+        {
+            "CodeCurrent": 734105,
+            "CodeNext": 2425817,
+            "CodePrev": 0,
+            "ErrorCode": "V547",
+            "FileName": "inode.c",
+            "Message": "Expression 'inode_buf' is always true."
+        },
+        {
+            "CodeCurrent": 3733848185,
+            "CodeNext": 1286079095,
+            "CodePrev": 3294734747,
+            "ErrorCode": "V707",
+            "FileName": "journal.c",
+            "Message": "Giving short names to global variables is considered to be bad practice. It is suggested to rename 'pt' variable."
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "ring_buf.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "dir_list.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 45175875,
+            "CodeNext": 3403850192,
+            "CodePrev": 8870857,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _, _"
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "journal.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 5665,
+            "CodeNext": 38073,
+            "CodePrev": 2223385764,
+            "ErrorCode": "V547",
+            "FileName": "journal.c",
+            "Message": "Expression 'buf' is always true."
+        },
+        {
+            "CodeCurrent": 1780252272,
+            "CodeNext": 2337,
+            "CodePrev": 1273835718,
+            "ErrorCode": "V547",
+            "FileName": "lookup_local.c",
+            "Message": "Expression 'i_list' is always true."
+        },
+        {
+            "CodeCurrent": 2368682587,
+            "CodeNext": 1635129142,
+            "CodePrev": 332536625,
+            "ErrorCode": "V1042",
+            "FileName": "magic_block_scan.c",
+            "Message": "This file is marked with copyleft license, which requires you to open the derived source code."
+        },
+        {
+            "CodeCurrent": 22588031,
+            "CodeNext": 3403853296,
+            "CodePrev": 2216808,
+            "ErrorCode": "V1037",
+            "FileName": "file_type.c",
+            "Message": "Two or more case-branches perform the same actions. Check lines: _, _, _"
+        }
+    ]
+}
