@@ -20,10 +20,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <sys/stat.h> 
+#include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <utime.h>
+#include <sys/sysmacros.h>
 
 #ifndef O_LARGEFILE
 #define O_LARGEFILE 0

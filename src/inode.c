@@ -112,8 +112,10 @@ static void local_dump_extents(FILE *f, const char *prefix, struct ext2_inode * 
         unsigned int            printed = 0;
         errcode_t               errcode;
 
-	
-        errcode = local_ext2fs_extent_open(current_fs, *inode, &handle);
+//FIXME : Debian Bug #802089 (temporary work around)
+//      errcode = local_ext2fs_extent_open(current_fs, *inode, &handle);
+        errcode = ext2fs_extent_open2(current_fs,0,inode,&handle);
+//
         if (errcode)
                 return;
 
@@ -404,14 +406,14 @@ void dump_inode(FILE *out, const char *prefix,
         fprintf(out,
                         "%sFile ACL: %d    Directory ACL: %d Translator: %d\n",
                         prefix,
-                        inode->i_file_acl, LINUX_S_ISDIR(inode->i_mode) ? inode->i_dir_acl : 0,
+                        inode->i_file_acl, LINUX_S_ISDIR(inode->i_mode) ? inode->i_size_high : 0,
                         inode->osd1.hurd1.h_i_translator);
         else
                 fprintf(out, "%sFile ACL: %llu    Directory ACL: %d\n",
                         prefix,
                         inode->i_file_acl | ((long long)
                                 (inode->osd2.linux2.l_i_file_acl_high) << 32),
-                        LINUX_S_ISDIR(inode->i_mode) ? inode->i_dir_acl : 0);
+                        LINUX_S_ISDIR(inode->i_mode) ? inode->i_size_high : 0);
         if (os == EXT2_OS_LINUX)
                 fprintf(out, "%sLinks: %d   Blockcount: %llu\n",
                         prefix, inode->i_links_count,
