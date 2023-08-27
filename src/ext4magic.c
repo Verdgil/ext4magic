@@ -27,7 +27,10 @@
 #include <ctype.h>
 #include <string.h>
 #include <time.h>
-#include <errno.h> 
+#include <errno.h>
+#include <signal.h>
+#include <setjmp.h>
+
 
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
@@ -326,6 +329,7 @@ void print_modus_error(){
 	char message0[] = "Invalid parameter : only input of one modus allowed [ -M | -m | -R | -r | -L | -l | -H | D ]\n";
 	fprintf(stderr,"%s",message0);
 }
+
 
 
 //-------------------------------------------------------------------------------------------------------------

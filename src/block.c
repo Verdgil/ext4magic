@@ -17,10 +17,20 @@
  this constant will never run because we open the fs read-only.
 */ 
 #define EXT4INO  0
-
 #include <stdio.h>
+#include <signal.h>
+#include <setjmp.h>
+
+jmp_buf jump_buffer;
+int jumped = 0;
+
+void sigsegv_handler(int signum) {
+    jumped = 1;
+    longjmp(jump_buffer, 1);
+}
+
 #include <string.h>
-#include <unistd.h>
+
 
 #ifndef EXT2_FLAT_INCLUDES
 #define EXT2_FLAT_INCLUDES 0
@@ -94,14 +104,21 @@ void local_ext2fs_extent_free(ext2_extent_handle_t handle)
 
 //        if (handle->inode)
 //                ext2fs_free_mem(&handle->inode);
-        if (handle->path) {
-                for (i=1; i <= handle->max_depth; i++) {
-                        if (handle->path[i].buf)
-                                ext2fs_free_mem(&handle->path[i].buf);
-                }
-                ext2fs_free_mem(&handle->path);
-        }
-        ext2fs_free_mem(&handle);
+//        if (handle->path) {
+//                for (i=1; i <= handle->max_depth; i++) {
+//                    if (handle->path[i].buf) {
+//                        if (handle->inode) {
+//                            if (handle->inode->i_size != 1710939987) {
+//
+//                                ext2fs_free_mem(&handle->path[i].buf);
+//                            }
+//                        }
+//                    }
+//                }
+//                ext2fs_free_mem(&handle->path);
+//        }
+//        ext2fs_free_mem(&handle);
+    return;
 }
 
 
@@ -547,6 +564,7 @@ errcode_t local_block_iterate3(ext2_filsys fs,
 					    void	*priv_data),
 				void *priv_data)
 {
+    int error_label = 0;
 	int	i;
 	int	r, ret = 0;
 	// struct ext2_inode inode;
@@ -624,15 +642,18 @@ errcode_t local_block_iterate3(ext2_filsys fs,
 		while (1) {
 			ctx.errcode = ext2fs_extent_get(handle, op, &extent);
 			if (ctx.errcode) {
+                error_label++;
 				if (ctx.errcode != EXT2_ET_EXTENT_NO_NEXT)
 					break;
 				ctx.errcode = 0;
+                error_label++;
 				if (!(flags & BLOCK_FLAG_APPEND))
 					break;
 				blk = 0;
 				r = (*ctx.func)(fs, &blk, blockcnt,
 						0, 0, priv_data);
 				ret |= r;
+                error_label++;
 				check_for_ro_violation_goto(&ctx, ret,
 							    extent_errout);
 				if (r & BLOCK_CHANGED) {
@@ -640,16 +661,19 @@ errcode_t local_block_iterate3(ext2_filsys fs,
 						ext2fs_extent_set_bmap(handle,
 						       (blk64_t) blockcnt++,
 						       (blk64_t) blk, 0);
+                    error_label++;
 					if (ctx.errcode || (ret & BLOCK_ABORT))
 						break;
 					continue;
 				}
+                error_label++;
 				break;
 			}
 
 			op = EXT2_EXTENT_NEXT;
 			blk = extent.e_pblk;
 			if (!(extent.e_flags & EXT2_EXTENT_FLAGS_LEAF)) {
+                error_label++;
 				if (ctx.flags & BLOCK_FLAG_DATA_ONLY)
 					continue;
 				if ((!(extent.e_flags &
@@ -664,10 +688,12 @@ errcode_t local_block_iterate3(ext2_filsys fs,
 						extent.e_pblk = blk;
 						ctx.errcode =
 				ext2fs_extent_replace(handle, 0, &extent);
+                        error_label++;
 						if (ctx.errcode)
 							break;
 					}
 				}
+                error_label++;
 				continue;
 			}
 			uninit = 0;
@@ -680,6 +706,7 @@ errcode_t local_block_iterate3(ext2_filsys fs,
 				r = (*ctx.func)(fs, &new_blk, blockcnt,
 						0, 0, priv_data);
 				ret |= r;
+                error_label++;
 				check_for_ro_violation_goto(&ctx, ret,
 							    extent_errout);
 				if (r & BLOCK_CHANGED) {
@@ -689,6 +716,7 @@ errcode_t local_block_iterate3(ext2_filsys fs,
 						       (blk64_t) new_blk,
 						       uninit);
 					if (ctx.errcode)
+                        error_label++;
 						goto extent_errout;
 				}
 				if (ret & BLOCK_ABORT)
@@ -699,7 +727,9 @@ errcode_t local_block_iterate3(ext2_filsys fs,
 		mark_extent_block(fs, (char*) inode.i_block);
 
 	extent_errout:
-		local_ext2fs_extent_free(handle);
+
+		    local_ext2fs_extent_free(handle);
+        error_label = 0;
 		ret |= BLOCK_ERROR | BLOCK_ABORT;
 		goto errout;
 	}
