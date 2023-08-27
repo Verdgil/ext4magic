@@ -67,8 +67,12 @@ for (i=1;i <= cm ;i++) if (step < (p_hist+i)->c_count) step = (p_hist+i)->c_coun
 step = step / 50;
 for (i=1;i <= cm ;i++){
 	fprintf(stdout,"%10lu : %8lu |", (long unsigned int)(p_hist+i)->time , (long unsigned int)(p_hist+i)->c_count);
-	for (j = 0,x = (p_hist+i)->c_count/50 ; j < 50 ; j++, x+=step )
-	fprintf(stdout,"%c",(x<(p_hist+i)->c_count) ? '*' : ' '); 
+	for (
+            j = 0,x = (p_hist+i)->c_count/50; //-V636
+            j < 50;
+            j++, x+=step
+    )
+	    fprintf(stdout,"%c",(x<(p_hist+i)->c_count) ? '*' : ' ');
 	fprintf(stdout,"|   %s", time_to_string((__u32)(p_hist+i)->time));
 }
 // d_time
@@ -79,8 +83,9 @@ for (i=1;i <= cm ;i++) if (step < (p_hist+i)->d_count) step = (p_hist+i)->d_coun
 step = step / 50;
 for (i=1;i <= cm ;i++){
 	fprintf(stdout,"%10lu : %8lu |", (long unsigned int)(p_hist+i)->time , (long unsigned int)(p_hist+i)->d_count);
-	for (j = 0,x = (p_hist+i)->d_count/50 ; j < 50 ; j++, x+=step )
-	fprintf(stdout,"%c",(x<(p_hist+i)->d_count) ? '*' : ' '); 
+	for (j = 0,x = (p_hist+i)->d_count/50 ; j < 50 ; j++, x+=step ) { //-V636
+	    fprintf(stdout,"%c",(x<(p_hist+i)->d_count) ? '*' : ' ');
+    }
 	fprintf(stdout,"|   %s", time_to_string((__u32)(p_hist+i)->time));
 }
 // cr_time
@@ -92,8 +97,9 @@ if (crt_found){
 	step = step / 50;
 	for (i=1;i <= cm ;i++){
 		fprintf(stdout,"%10lu : %8lu |", (long unsigned int)(p_hist+i)->time , (long unsigned int)(p_hist+i)->cr_count);
-		for (j = 0,x = (p_hist+i)->cr_count/50 ; j < 50 ; j++, x+=step )
-		fprintf(stdout,"%c",(x<(p_hist+i)->cr_count) ? '*' : ' '); 
+		for (j = 0,x = (p_hist+i)->cr_count/50 ; j < 50 ; j++, x+=step ) { //-V636
+            fprintf(stdout, "%c", (x < (p_hist + i)->cr_count) ? '*' : ' ');
+        }
 		fprintf(stdout,"|   %s", time_to_string((__u32)(p_hist+i)->time));
 	}
 }
@@ -129,6 +135,10 @@ inodesize = fs->super->s_inode_size;
 inode_max = fs->super->s_inodes_count;
 inode_per_group = fs->super->s_inodes_per_group;
 buf = malloc(blocksize);
+if(!buf) {
+    fprintf(stderr,"ERROR: can't allocate memory\n");
+    return;
+}
 
 inode_per_block = blocksize / inodesize;
 inode_block_group = inode_per_group / inode_per_block;
@@ -198,10 +208,10 @@ for (group = 0 ; group < fs->group_desc_count ; group++){
 
 	dump_hist(hist, cm, t_after, t_before, crt_found);
 
-	if(buf) {
-		free(buf);
-		buf = NULL;
-	}
+
+	free(buf);
+    buf = NULL;
+
 return;
 } 
 
@@ -216,7 +226,7 @@ void print_coll_list(__u32 t_after, __u32 t_before, int flag){
 	ext2_ino_t	i;
 	ext2_ino_t 	*pointer;
 	char 		inode_buf[256];
-	struct 		ext2_inode_large *inode = (struct ext2_inode_large *)inode_buf;
+	struct 		ext2_inode_large *inode = (struct ext2_inode_large *)inode_buf; //-V1032
 	__u16		crt_found = 0;
 	int		inode_size = EXT2_INODE_SIZE(current_fs->super);
 
@@ -289,6 +299,10 @@ inodesize = fs->super->s_inode_size;
 inode_max = fs->super->s_inodes_count;
 inode_per_group = fs->super->s_inodes_per_group;
 buf = malloc(blocksize);
+if(!buf) {
+    fprintf(stderr,"ERROR: can't allocate memory\n");
+    return 0;
+}
 
 inode_per_block = blocksize / inodesize;
 inode_block_group = inode_per_group / inode_per_block;
@@ -343,10 +357,8 @@ for (flag=0;flag<2;flag++){
 if(!flag) first = last;
 }
 
-	if(buf) {
-		free(buf);
-		buf = NULL;
-	}
+	free(buf);
+	buf = NULL;
 	if (! first) fprintf(stderr,"Warning: No time window found, because no found a deleted inode\n");
 return first - 1 ;
 } 
@@ -362,6 +374,10 @@ return first - 1 ;
 
 	if (!collect){
 		collect = malloc(sizeof(struct inode_nr_collect));
+        if(!collect) {
+            fprintf(stderr, "ERROR : can not allocate memory\n");
+            return;
+        }
 		collect->list = malloc(ALLOC_SIZE * sizeof(ext2_ino_t));
 		if (!collect->list){
 			free(collect);

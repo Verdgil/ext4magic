@@ -52,10 +52,13 @@ void add_link_stack(ext2_ino_t inode_nr, __u32 link_count, char* name, __u32 gen
 return;
 
 errout:
+    if(!this) {
+        fprintf(stderr,"ERROR: can't allocate memory\n");
+        return;
+    }
 	if(this->name)
 		free(this->name);
-	if(this)
-		free(this);
+    free(this);
 }
 
 

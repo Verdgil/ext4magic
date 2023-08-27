@@ -84,7 +84,10 @@ static char* get_pathname(blk_t inode_nr, char* i_pathname, char *magic_buf, uns
 	__u32				scan = 0;
 
 	help_data = malloc(sizeof(struct found_data_t));
-	if (!help_data) return NULL;
+	if (!help_data) {
+        fprintf(stderr,"ERROR: can't allocate memory\n");
+        return NULL;
+    }
 	memset (help_data,0, sizeof(struct found_data_t));
 
 	if ( ident_file(help_data,&scan,magic_buf,buf)){
@@ -166,15 +169,25 @@ ext2_ino_t 				first_block_inode_nr , inode_nr;
 
 
 pathname = malloc(26);
+if(!pathname) {
+    fprintf(stderr,"ERROR: can't allocate memory\n");
+    goto errout;
+}
 blocksize = current_fs->blocksize;
 inodesize = current_fs->super->s_inode_size;
 inode_max = current_fs->super->s_inodes_count;
 inode_per_group = current_fs->super->s_inodes_per_group;
 buf = malloc(blocksize);
+if(!buf) {
+    fprintf(stderr,"ERROR: can't allocate memory\n");
+    goto errout;
+}
 if (! (flag & 0x01) ){
 	tmp_buf = malloc (12 * blocksize);
-	if (!tmp_buf)
-		goto errout;
+	if (!tmp_buf) {
+        fprintf(stderr,"ERROR: can't allocate memory\n");
+        goto errout;
+    }
 	cookie = magic_open(MAGIC_MIME | MAGIC_NO_CHECK_COMPRESS | MAGIC_NO_CHECK_ELF | MAGIC_CONTINUE);
 	if ((! cookie) ||  magic_load(cookie, NULL)){
 		fprintf(stderr,"ERROR: can't find libmagic\n");
@@ -245,7 +258,7 @@ for (group = 0 ; group < current_fs->group_desc_count ; group++){
 						}
 					}
 // 1. magical step 
-					if (LINUX_S_ISDIR(mode) && ( flag & 0x01) && (pathname)){ 
+					if (LINUX_S_ISDIR(mode) && ( flag & 0x01)){
 						sprintf(pathname,"<%lu>",(long unsigned int)inode_nr);
 
 	
@@ -385,10 +398,16 @@ inode_per_block = blocksize / inodesize;
 inode_nr = inode_max ;
 
 buf = malloc(blocksize);
+if(!buf) {
+    fprintf(stderr,"ERROR: can't allocate memory\n");
+    goto errout;
+}
 if (! (flag & 0x01) ){
 	tmp_buf = malloc (12 * blocksize);
-	if (!tmp_buf)
-		goto errout;
+	if (!tmp_buf) {
+        fprintf(stderr,"ERROR: can't allocate memory\n");
+        goto errout;
+    }
 	cookie = magic_open(MAGIC_MIME | MAGIC_NO_CHECK_COMPRESS | MAGIC_NO_CHECK_ELF | MAGIC_CONTINUE);
 	if ((! cookie) ||  magic_load(cookie, NULL)){
 		fprintf(stderr,"ERROR: can't find libmagic\n");
@@ -410,8 +429,12 @@ while ( get_pool_block(buf) ){
 		if((inode.i_dtime) || (!inode.i_size) || (!inode.i_blocks) || (!LINUX_S_ISREG(inode.i_mode)))
 			continue;
 		if (check_file_stat(&inode)){
+            if(!pathname) {
+                fprintf(stderr,"ERROR: can't allocate memory\n");
+                goto errout;
+            }
 			i_pathname = identify_filename(i_pathname, tmp_buf, &inode, inode_nr);
-			sprintf(pathname,"<%lu>",(long unsigned int)inode_nr);
+            sprintf(pathname,"<%lu>",(long unsigned int)inode_nr);
 			recover_file(des_dir,"MAGIC-2", ((i_pathname)?i_pathname : pathname), &inode, inode_nr, 1);
 		}
 		if(i_pathname){

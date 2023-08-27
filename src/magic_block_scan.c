@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <ext2fs/ext2fs.h>
 
 #include "util.h"
 #include "inode.h"
@@ -72,7 +73,7 @@ static struct found_data_t* copy_file_data(struct found_data_t* old){
 //FIXME private
 	new = malloc(sizeof(struct found_data_t));
 	if (!new) return NULL;
-	memcpy(new,old,sizeof(struct found_data_t));
+	memcpy(new, old, sizeof(struct found_data_t));
 	new->scan_result = malloc(str_len);
 	new->name	 = malloc(name_len);
 	new->inode	 = new_inode();
@@ -92,9 +93,9 @@ static struct found_data_t* copy_file_data(struct found_data_t* old){
 		fprintf(stderr,"ERROR; while allocate memory for found copy file struct\n");
 	}
 	else{
-		memcpy(new->scan_result,old->scan_result,str_len);
-		memcpy(new->name,old->name,name_len);
-		memcpy(new->inode,old->inode,128);
+		memcpy(new->scan_result, old->scan_result, str_len);
+		memcpy(new->name, old->name, name_len);
+        memcpy(new->inode, old->inode, sizeof(struct ext2_inode_large));
 	}
 	return new;	
 }
@@ -156,7 +157,7 @@ static struct found_data_t* new_file_data(blk_t blk,__u32 scan,char *magic_buf, 
 		return free_file_data(new);
 	}
 }
-*f++;		//"gcc warning: value computed is not used" warning is okay  
+*f++;		//"gcc warning: value computed is not used" warning is okay //-V532
 
 return new;
 }
@@ -214,7 +215,11 @@ static int file_data_correct_size(struct found_data_t* this, int size){
 				this->inode->i_block[EXT2_DIND_BLOCK] = 0;
 				this->inode->i_block[EXT2_TIND_BLOCK] = 0;
 			}
-			for (i = current_fs->blocksize,ref=1; i<i_size; i+=current_fs->blocksize,ref++);
+			for (
+                i = current_fs->blocksize, ref = 1;
+                i < i_size;
+                i += current_fs->blocksize, ref++
+            ); //-V529
 			while (ref < EXT2_IND_BLOCK){
 				this->inode->i_block[ref] = 0;
 				ref++;
@@ -525,9 +530,12 @@ static int magic_check_block(unsigned char* buf,magic_t cookie , magic_t cookie_
 	char	text[100] = "";
 	char 	*p_search;
 	__u32	retval = 0;
-	char	token[20]; 
-	
-	memset(magic_buf,0,100); //FIXME
+	char	token[20];
+    char	searchstr[] = "bin/perl python PEM SGML OpenSSH libtool M3U Tcl=script Perl=POD module=source PPD make=config bin/make awk bin/ruby bin/sed bin/expect bash ";
+    char	searchtype[] = "text/x-perl text/x-python text/PEM text/SGML text/ssh text/libtool text/M3U text/tcl text/POD text/x-perl text/PPD text/configure text/x-makefile text/x-awk text/ruby text/sed text/expect text/x-shellscript ";
+
+
+    memset(magic_buf,0,100); //FIXME
 	memset(text,0,100);
 	while ((count >= 0) && (*(buf+count) == 0)) count-- ;
 	if (ext2fs_le32_to_cpu(*(blk_t*)buf) == blk +1){
@@ -567,8 +575,6 @@ static int magic_check_block(unsigned char* buf,magic_t cookie , magic_t cookie_
 //loop:
 	if ((strstr(magic_buf,"text/plain"))||(strstr(magic_buf,"text/html"))){
 		char 	*type;
-		char	searchstr[] = "bin/perl python PEM SGML OpenSSH libtool M3U Tcl=script Perl=POD module=source PPD make=config bin/make awk bin/ruby bin/sed bin/expect bash ";
-		char	searchtype[] = "text/x-perl text/x-python text/PEM text/SGML text/ssh text/libtool text/M3U text/tcl text/POD text/x-perl text/PPD text/configure text/x-makefile text/x-awk text/ruby text/sed text/expect text/x-shellscript ";
 		if (deep  && (count > 250) && (!strncmp((char*)buf,"From ",5))){
 			p_search = (char*)buf + 6;
 			for (len = 0; (len < (count -7)) ; len++){
@@ -681,8 +687,8 @@ static int magic_check_block(unsigned char* buf,magic_t cookie , magic_t cookie_
 		goto out;
 
 	if (deep && (retval & M_TXT)){
-		char	searchstr[] = "html PGP rtf texmacs vnd.graphviz x-awk x-gawk x-info x-msdos-batch x-nawk x-perl x-php x-shellscript x-texinfo x-tex x-vcard x-xmcd xml ";
-		p_search = searchstr;
+        p_search = "html PGP rtf texmacs vnd.graphviz x-awk x-gawk x-info x-msdos-batch x-nawk x-perl x-php x-shellscript x-texinfo x-tex x-vcard x-xmcd xml ";
+
 		while (*p_search){
 			len=0;
 			while((*p_search) != 0x20){
@@ -704,8 +710,8 @@ static int magic_check_block(unsigned char* buf,magic_t cookie , magic_t cookie_
 	}
 
 	if (strstr(magic_buf,"application/octet-stream")){
-		char	searchstr[] = "7-zip cpio CD-ROM MPEG 9660 Targa Kernel boot SQLite OpenOffice.org VMWare3 VMware4 JPEG ART PCX IFF DIF RIFF ATSC ScreamTracker matroska LZMA Audio=Visual Sample=Vision ISO=Media ext2 ext3 ext4 LUKS python ESRI=Shape ecryptfs Matlab=v5 ";
-		p_search = searchstr;
+		p_search = "7-zip cpio CD-ROM MPEG 9660 Targa Kernel boot SQLite OpenOffice.org VMWare3 VMware4 JPEG ART PCX IFF DIF RIFF ATSC ScreamTracker matroska LZMA Audio=Visual Sample=Vision ISO=Media ext2 ext3 ext4 LUKS python ESRI=Shape ecryptfs Matlab=v5 ";
+
 		while (*p_search){
 			len=0;
 			while((*p_search) != 0x20){
@@ -877,7 +883,7 @@ static int get_range(blk_t* p_blk ,struct ext2fs_struct_loc_generic_bitmap *ds_b
 		fprintf(stderr,"ERROR: while read block %10u + %d\n",begin,count);
 		return 0;
 	}
-	if (count && count < MAX_RANGE){
+	if (count < MAX_RANGE){
 		memset(buf+(count * current_fs->blocksize), 255, current_fs->blocksize);
 		*flag = 1;
 	}else 
@@ -1045,10 +1051,15 @@ if ((! cookie) ||  magic_load(cookie, NULL) || (! cookie_f) || magic_load(cookie
 	goto errout;
 }
 v_buf = malloc(blocksize * (MAX_RANGE+1));
+if(!v_buf) {
+    fprintf(stderr,"ERROR: can't allocate memory\n");
+    goto errout;
+
+}
 buf = v_buf + blocksize ; 
 tmp_buf = malloc(blocksize);
 magic_buf = malloc(100);
-if ((! v_buf) || (! magic_buf) || (! tmp_buf)){
+if ((! magic_buf) || (! tmp_buf)){
 	fprintf(stderr,"ERROR: can't allocate memory\n");
 	goto errout;
 }
@@ -1287,7 +1298,7 @@ static int check_extent_len(struct ext3_extent_header *header, struct extent_are
 						ea->l_end = ext2fs_le32_to_cpu(extent->ee_block) + ext2fs_le16_to_cpu(extent->ee_len)-1;
 //					}
 					ea->b_count += ext2fs_le16_to_cpu(extent->ee_len);
-					ea->size = ((unsigned long long) ((ext2fs_le32_to_cpu(extent->ee_block)) + 
+					ea->size = ((unsigned long long) ((unsigned long long)(ext2fs_le32_to_cpu(extent->ee_block)) +
 							 (ext2fs_le16_to_cpu(extent->ee_len)))) * current_fs->blocksize;
 				}
 			}
@@ -1373,10 +1384,14 @@ if ((! cookie) ||  magic_load(cookie, magicfile) || (! cookie_f) || magic_load(c
 	goto errout;
 }
 v_buf = malloc(blocksize * (MAX_RANGE+1));
+if(!v_buf) {
+    fprintf(stderr,"ERROR: can't allocate memory\n");
+    goto errout;
+}
 buf = v_buf + blocksize ; 
 tmp_buf = malloc(blocksize * 9);
 magic_buf = malloc(100);
-if ((! v_buf) || (! magic_buf)  || (! tmp_buf)){
+if ((! magic_buf)  || (! tmp_buf)){
 	fprintf(stderr,"ERROR: can't allocate memory\n");
 	goto errout;
 }

@@ -78,7 +78,7 @@ static int list_dir_proc(ext2_ino_t dir EXT2FS_ATTR((unused)),
         }
         if (ls->options & PARSE_OPT) {
                 if (ino && intern_read_inode(ino, &inode)) return 0;
-                fprintf(stdout,"/%u/%06o/%d/%d/%s/",ino,inode.i_mode,inode.i_uid, inode.i_gid,name);
+                fprintf(stdout,"/%u/%06o/%d/%d/%s/",ino,inode.i_mode,inode.i_uid, inode.i_gid,name); //-V614
                 if (LINUX_S_ISDIR(inode.i_mode))
                         fprintf(stdout, "/");
                 else
@@ -538,8 +538,6 @@ void list_dir2(ext2_ino_t ino, struct ext2_inode *inode)
 				fl.dir_list = l_dir;
 				fl.transaction = &item->transaction;
 
-//        			flags = DIRENT_FLAG_INCLUDE_EMPTY;
-				flags = 0;
 				flags = (inode->i_flags & EXT2_INDEX_FL) ? SKIP_HTREE : 0 ; 
 				if (options & DELETED_OPT ) flags |= DIRENT_FLAG_INCLUDE_REMOVED;
 				retval = local_dir_iterate3(current_fs,ino, inode, flags,0, find_dir_proc, &fl);
@@ -584,6 +582,10 @@ void lookup_local(char* des_dir, struct dir_list_head_t * dir, __u32 t_after , _
 			c = '"';
 		lp = GET_FIRST(dir);
 		inode = malloc(current_fs->super->s_inode_size);
+        if(!inode) {
+            fprintf(stderr,"ERROR: can't allocate memory\n");
+            return;
+        }
 		while (lp){
 			if (! strcmp(lp->filename,"..")) {
 				if ((dir->path_inode != lp->inode_nr) && (dir->path_inode != 0)) break;
@@ -755,6 +757,10 @@ ext2_ino_t local_namei(struct dir_list_head_t * dir, char *path, __u32 t_after ,
 		}
 
 		p_path = (char*) malloc(strlen(path)+1);
+        if(!p_path) {
+            fprintf(stderr,"ERROR: can't allocate memory\n");
+            goto out;
+        }
 		p2 = p_path;
 		p1 = path + strspn(path,"/");
 		c = *p1;

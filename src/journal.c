@@ -81,7 +81,7 @@ void dump_journal_superblock( void)
   __u32 nr_users;
   char buffer[40];
   uuid_t *uu;
-  journal_superblock_t *jsb = (journal_superblock_t*)jsb_buffer;
+  journal_superblock_t *jsb = (journal_superblock_t*)jsb_buffer; //-V1032
 
 
   fprintf(stdout,"\nJournal Super Block:\n");
@@ -814,7 +814,7 @@ int init_journal(void)
 	retval = read_journal_block( 0, buf, 2048, &got);
 	if (retval) goto errout;
 	
-	jsb = (journal_superblock_t *) buf;
+	jsb = (journal_superblock_t *) buf; //-V1032
 	sb = (struct ext2_super_block *) (buf+1024);
 #ifdef WORDS_BIGENDIAN
 	if (sb->s_magic == ext2fs_swab16(EXT2_SUPER_MAGIC)) ext2fs_swap_super(sb);
@@ -838,7 +838,7 @@ int init_journal(void)
 	retval = read_journal_block(blocknr*blocksize,jsb_buffer, 1024, &got);
 	if (retval) goto errout;
 
-	jsb = (journal_superblock_t *) jsb_buffer;
+	jsb = (journal_superblock_t *) jsb_buffer; //-V1032
 	if (ext2fs_be32_to_cpu(jsb->s_header.h_magic) != JFS_MAGIC_NUMBER) {
 		fprintf(stderr, "Journal superblock magic number invalid!\n");
 		return JOURNAL_ERROR ;
@@ -902,11 +902,8 @@ int init_journal(void)
 			extract_descriptor_block(buf, jsb, &blocknr, blocksize, sequence, &wrapflag);
 			continue;
 
-		case JFS_COMMIT_BLOCK:
-			blocknr++;
-			continue;
-
-		case JFS_REVOKE_BLOCK:
+        case JFS_COMMIT_BLOCK:
+        case JFS_REVOKE_BLOCK:
 			blocknr++;
 			continue;
 

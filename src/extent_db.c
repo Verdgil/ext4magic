@@ -136,8 +136,8 @@ int extent_db_del(struct extent_db_t* db,blk_t blk){
 	if ((pointer->entry) && (pointer->entry->blocknr == blk)){
 		(pointer->last)->next = pointer->next;
 		pointer->next->last = pointer->last;
-		if(pointer->entry) free(pointer->entry);
-		if (pointer) free(pointer);
+		free(pointer->entry);
+		free(pointer);
 		(db->count)--;
 //		printf("Extend DB : entry %lu deleted\n",blk);
 		ret = 1;
@@ -148,21 +148,26 @@ return ret;
 
 
 static void clear_entry(struct extent_db_item *p){
+    if(!p) {
+        fprintf(stderr,"ERROR: p is empty\n");
+        return;
+    }
 	if (p->next)
 		clear_entry(p->next);
 	if (p->entry) {
 //		printf("EXT-DB : %10u  %d  %10lu  %10lu  %10lu\n",p->entry->blocknr, (p->entry->l_start)?1:0, p->entry->start_b, p->entry->end_b, p->entry->len);
 		free(p->entry);
 	}
-	if (p) free(p);
+	free(p);
 return;
 }
 
 
 void extent_db_clear(struct extent_db_t* db){
 //	printf("Extent DB has %lu Entries ; clean now\n",db->count);
+    if(!db) return;
 	clear_entry(db->next);
-	if(db) free(db);
+	free(db);
 return;
 }
 
@@ -182,8 +187,10 @@ static int mark_extent_len(struct extent_db_t* db, blk_t blk, void * buf){
 		bufset=1;
 	}
 	buf_tmp = malloc(current_fs->blocksize);
-	if ((!buf_tmp) || (!buf))
-		return 1;
+	if ((!buf_tmp) || (!buf)) {
+        free(buf_tmp);
+        return 1;
+    }
 
 	header = buf;
 	ret = ext2fs_extent_header_verify((void*) header, current_fs->blocksize);
@@ -210,8 +217,8 @@ static int mark_extent_len(struct extent_db_t* db, blk_t blk, void * buf){
 			}
 		}
 	}
-	if (buf_tmp) free(buf_tmp);
-	if (bufset && buf) free(buf);
+	free(buf_tmp);
+	if (bufset) free(buf);
 return ret;
 }
 

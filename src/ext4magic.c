@@ -323,7 +323,7 @@ errout:
 
 //subfunction for main
 void print_modus_error(){
-	char message0[] = "Invalide parameter : only input of one modus allowed [ -M | -m | -R | -r | -L | -l | -H | D ]\n";
+	char message0[] = "Invalid parameter : only input of one modus allowed [ -M | -m | -R | -r | -L | -l | -H | D ]\n";
 	fprintf(stderr,"%s",message0);
 }
 
@@ -584,6 +584,10 @@ while ((c = getopt (argc, argv, "TJRMLlmrSxi:t:j:f:Vd:B:b:a:I:H")) != EOF) {
 			mode |= COMMAND_PATHNAME ;
 			l = strlen(optarg);
 			pathname = malloc( l+1 );
+            if(!pathname) {
+                fprintf(stderr,"ERROR: can't allocate memory\n");
+                break;
+            }
 			strcpy(pathname,optarg);
 			break;
 
@@ -725,7 +729,7 @@ if ((mode && magicscan) || disaster){
 	printf("Warning: Activate magic-scan or disaster-recovery function, may be some command line options ignored\n");
 	inode_nr = EXT2_ROOT_INO;
 	t_before = (__u32) now_time;
-	if (disaster){
+	if (disaster){ //+V547
 		t_after = t_before - 60;
 		printf("Start ext4magic Disaster Recovery\n"); 
 	}
@@ -740,6 +744,7 @@ if ((mode && magicscan) || disaster){
 			mode |= INPUT_TIME;
 		}
 		magicfile = malloc(64);
+        if(!magicfile) goto errout;
 		memset(magicfile,0,64);
 		strncpy (magicfile,"/usr/share/misc/ext4magic",25); 
 		retval = stat (magicfile, &filestat);
@@ -762,7 +767,7 @@ if ((mode && magicscan) || disaster){
 if (mode & INPUT_TIME){
 	if (! ((t_after > 315601200) && (t_after < t_before))) // 315601200 = "1980-01-01 20:00:00"
 		{
-		  fprintf(stderr,"Invalide parameter: range \"AFTER <--> BEFORE\"\n");
+		  fprintf(stderr,"Invalid parameter: range \"AFTER <--> BEFORE\"\n");
 		  fprintf(stderr,"the automatic default parameter AFTER=\"now -1 day\" ; BEFORE=\"now\"\n");
 		  fprintf(stderr,"\"-b before-timestamp\" must greater then \"-a after-timestamp\"\n"); 
 		  fprintf(stderr,"Example : %s -H -b $(date +%%s) -a $(date -d \"-1 day\" +%%s) %s\n",progname,current_fs->device_name);
@@ -770,7 +775,7 @@ if (mode & INPUT_TIME){
                   goto errout;
 	}
 	if (mode & PRINT_TRANSACTION){
-		  fprintf(stderr,"Invalide parameter: use either Transaction-Nr or Timestamps for search in Journal\n");
+		  fprintf(stderr,"Invalid parameter: use either Transaction-Nr or Timestamps for search in Journal\n");
  		  exitval = EXIT_FAILURE ; 
                   goto errout;
 	}
@@ -900,6 +905,7 @@ if ((recovermodus & (LIST_ALL | LIST_STATUS)) && format)
 	}
 
         inode_buf = malloc(EXT2_INODE_SIZE(current_fs->super));
+        if(!inode_buf) return EXIT_FAILURE;
         if (intern_read_inode_full(inode_nr, inode_buf,EXT2_INODE_SIZE(current_fs->super))){
  		fprintf(stderr,"Fatal Error: can not read InodeNr. %lu \n", (long unsigned int)inode_nr);
                 return EXIT_FAILURE;

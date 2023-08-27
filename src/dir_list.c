@@ -31,11 +31,15 @@ struct dir_list_t* add_list_item (struct dir_list_head_t *head , ext2_ino_t nr, 
 		return head->last;
 	
 	this = malloc(sizeof(struct dir_list_t));
-	if (! this)
-		 goto errout;
-    	this->filename = malloc(strlen(name) + 1);
-	if (! this->filename) 
-		 goto errout;
+	if (! this) {
+        fprintf(stderr,"ERROR: can't allocate memory\n");
+        goto errout;
+    }
+    this->filename = malloc(strlen(name) + 1);
+	if (! this->filename) {
+
+        goto errout;
+    }
 
 	head->last->next = this;
 	head->last = this;
@@ -48,8 +52,9 @@ struct dir_list_t* add_list_item (struct dir_list_head_t *head , ext2_ino_t nr, 
 
 errout:
 	fprintf(stderr,"no free memory\n");
+    if(!this) return NULL;
 	if (this->filename) free(this->filename);
-	if (this) free(this);
+	free(this);
 	return NULL;
 }	
 
@@ -97,9 +102,7 @@ struct  dir_list_head_t* new_dir_list (ext2_ino_t path_inode, ext2_ino_t dir_ino
 		this->dirname = strchr(this->pathname,0);
 		strcat(this->pathname , name);
 	}
-	else
-	{
-		if (this->pathname) free(this->pathname);
+	else {
 		free(this);
 		return NULL;
 	}

@@ -704,7 +704,7 @@ static int follow_zlib(unsigned char *buf, __u16 blockcount, __u32 *offset, __u3
 			z_ret = inflateInit2(&(priv->z_strm), -MAX_WBITS);
 		else 
 			z_ret = inflateInit(&(priv->z_strm));
-		if ((z_ret != Z_OK) || (!out)){
+		if ((z_ret != Z_OK)){
 			printf("Error: init zlib\n");
 		}
 		priv->flag &= ~0x3;
@@ -751,7 +751,7 @@ static int follow_zlib(unsigned char *buf, __u16 blockcount, __u32 *offset, __u3
 		priv->flag = 0;	
 	}
 	else
-		if ((!ret) || (z_ret && (z_ret != Z_STREAM_END))){
+		if ((!ret) || (z_ret)){
 			inflateEnd(&(priv->z_strm));	
 			priv->flag = 0;
 			ret = 0;
@@ -971,7 +971,7 @@ int file_zip(unsigned char *buf, int *size, __u32 scan , int flag, struct found_
 				if((*size) > 22){
 					j = strlen(token) -1;
 					i = (*size -12);
-					while((i > ((*size)-22)) && (buf[i] != token[j])){
+					while((i > ((*size)-22)) && (buf[i] != token[j])){ //-V557
 						i--;
 					}
 					while ((i> ((*size)-22)) && (j >= 0) && (buf[i] == token[j])){
@@ -1353,7 +1353,7 @@ int file_lzma(unsigned char *buf, int *size, __u32 scan , int flag , struct foun
 	int ret = 0;
 	switch (flag){
 		case 0 :
-			if ((*size< (current_fs->blocksize - 3))) 
+			if (*size < (current_fs->blocksize - 3))
 					ret = 1;
 			break;
 			
@@ -1600,7 +1600,7 @@ static int follow_cpio(unsigned char *buf, __u16 blockcount, __u32 *offset, __u3
 					n_len = strtoul(help,NULL,16);
 					memcpy(help,newc_header->c_filesize,8);
 					f_len = strtoul(help,NULL,16);
-					if(n_len || n_len){
+					if(n_len || f_len){
 						n_len = (n_len + sizeof(struct cpio_newc_header)+ 3) & ~3;
 						*last_match = f_offset+1;
 						f_offset += n_len + f_len ;
@@ -1794,12 +1794,12 @@ int pdf_is_obj(unsigned char *buf,__u32 offset){
 
 	if(isdigit(buf[offset])){
 		i=1;
-		while (isdigit(buf[offset + i]) && (i<12))
+		while ((i<12) && isdigit(buf[offset + i]))
 			i++;
 		if (buf[offset + i] == 0x20){
 			i++;
 			j=0;
-			while (isdigit(buf[offset + i + j]) && (j<4))
+			while ((j<4) && isdigit(buf[offset + i + j]))
 			j++;
 			i += j;
 			if ((buf[offset + i] == 0x20) && (buf[offset + i + 1] == 0x6f) &&
@@ -2036,6 +2036,10 @@ int file_pdf(unsigned char *buf, int *size, __u32 scan , int flag, struct found_
 		case 2 :
 			offset = 0;
 			priv = malloc(sizeof(struct priv_pdf_t));
+            if(!priv) {
+                fprintf(stderr, "ERROR : can not allocate memory\n");
+                return 0;
+            }
 			priv->o_nr = 0;
 			priv->flag = 0;
 			priv->xref_0 = 0;
@@ -2093,7 +2097,7 @@ __u16	save_flag = flag;
 				    | ((buf[i]<58) && (buf[i]>46))
 				    | ((buf[i]<91) && (buf[i]>64)) 
 				    | ((buf[i]<123) && (buf[i]>96)))){
-					if ((buf[i]==0x20) && ((buf[i+1]==0x0a)||(buf[i+1]==0x0a))){
+					if ((buf[i]==0x20) && ((buf[i+1]==0x0a)||(buf[i+1]==0x0a))){//-V501 I don't any idea what is it
 					//Warning, there is a blanc
 					}
 					else 
@@ -2118,7 +2122,7 @@ __u16	save_flag = flag;
 					cull++;
 				if ((buf[i]<0x09) || ((buf[i]<0x20) && (buf[i]>0x0d)))
 					return 0;
-				if ((buf[i] == 0x3c) && (buf[i+3] == 0x3e) && ((buf[i+1] & 0x20) == 0x42) && ((buf[i+1] & 0x20) == 0x52)){
+				if ((buf[i] == 0x3c) && (buf[i+3] == 0x3e) && ((buf[i+1] & 0x20) == 0x42) && ((buf[i+1] & 0x20) == 0x52)){ //-V560
 					cull++;
 					len = 0;
 				}				
@@ -2182,7 +2186,7 @@ static int read_smtp_codestr(unsigned char *buf,__u32 f_offset, int len){
 static int smtp_decode_content_type(unsigned char * buf, __u32 offset, int len, struct priv_smtp_t *priv){
 	int i,j,slot;	
 		
-	if (!strncmp("Content-Type:",(char*)buf+offset,12)) {
+	if (!strncmp("Content-Type:",(char*)buf+offset,13)) {
 		i = 13;
 		while ((i<(len-6)) && (buf[offset +i] != ';')) i++;
 		while ((i<(len-6)) && (!((buf[offset +i] == 'd') && // dary=
@@ -2548,6 +2552,10 @@ int file_smtp(unsigned char *buf, int *size, __u32 scan , int flag, struct found
 		case 2 :
 			offset = 0;
 			priv = malloc(sizeof(struct priv_smtp_t));
+            if(!priv) {
+                fprintf(stderr,"ERROR: can't allocate memory\n");
+                return 0;
+            }
 			memset(priv,0,sizeof(struct priv_smtp_t));
 			f_data->priv = priv;
 			b_count = (f_data->buf_length > 12) ? 12 : f_data->buf_length ;
@@ -2765,10 +2773,6 @@ static int follow_elf(unsigned char *buf, __u16 blockcount, __u32 *offset, __u32
 			for (i=0;i<(size+4);i++)
 				if (buf[f_offset +i])
 					break;
-			if((i<size) || (i == (size +4))){
-//				printf("ELF : no section header found\n");
-				ret = 0;
-			}
 	
 			max = (*table) + (size * count);
 			for ( i=0; i< count; i++){
@@ -3269,6 +3273,10 @@ int file_jpeg(unsigned char *buf, int *size, __u32 scan , int flag, struct found
 		case 2 :
 			offset = 0;
 			priv_flag = malloc(4);
+            if(!priv_flag) {
+                fprintf(stderr, "ERROR : can not allocate memory\n");
+                return 0;
+            }
 			*priv_flag = 0;
 			f_data->priv = priv_flag;
 			b_count = (f_data->buf_length > 12) ? 12 : f_data->buf_length ;
@@ -4808,7 +4816,6 @@ static int follow_flac(unsigned char *buf, __u16 blockcount, __u32 *offset, __u3
 				(p_data->flag)++;
 				memcpy(p_data->b_head,buf+f_offset,4);
 				*last_match = f_offset;
-				p_data->flag = 1;
 	//			p_data->begin = f_offset;
 				break;
 			}
@@ -5962,8 +5969,6 @@ static int read_dirname(char *buf, int len){
 		return 50; // ??? sdw
 	if(!(memcmp(buf,"1\0\0\0", 4)))
 		return 100; // db
-	if(!(memcmp(buf,"1\0\0\0", 4)))
-		return 100; // db
 	return ret;
 }
 
@@ -6411,7 +6416,7 @@ static int follow_matlab(unsigned char *buf, __u16 blockcount, __u32 *offset, __
 			__u16	*ms_pt;
 			__u16	*ms_ps;
 			__u16	ms_size ;
-			if ((m_type > 15) && (m_type < 19)){
+			if ((m_type > 15) && (m_type < 19)){ //FIXME //-V560
 				ms_ps=(__u16*) (buf+f_offset);
 				ms_pt=ms_ps+1;
 				if (flag & DATA_BIG_END){ // BIG Endian
@@ -6629,8 +6634,8 @@ int file_SQLite(unsigned char *buf, int *size, __u32 scan , int flag, struct fou
 		case 2:
 			p_16 = (__u16*)(buf+16);
 			b_size = (__u32)ext2fs_be16_to_cpu(*p_16);
-			if (b_size ==1)
-				b_size = 1;
+			if (b_size == 1)
+				b_size = 1; //-V1048 IDK WHAT IS IT //FIXME
 			else {
 				if((b_size <512)||(b_size > 32768) || (b_size &1))
 					b_size = 0;
@@ -7067,7 +7072,7 @@ for (i=0;i<18;i++){
 	break;
 }
 for (j=0;(j<12)&&(isprint(buf[j]));j++){};
-if ((i == 18)||(j==12)||((i==7)&&(atom_size != 8)) || ((i==7)&&(atom_size != 8)) || ((!i)&&(atom_size % 4)))  {
+if ((i == 18)||(j==12)||((i==7)&&(atom_size != 8)) || ((i==7)&&(atom_size != 8)) || ((!i)&&(atom_size % 4)))  { //-V501 I HATE THIS CODE
 #ifdef DEBUG_QUICK_TIME
 	fprintf(stderr,"QuickTime : first Container atom unknown ; block %lu ; size %lu\n",f_data->first, atom_size);
 #endif
@@ -7308,7 +7313,7 @@ static int follow_ogg(unsigned char *buf, __u16 blockcount, __u32 *offset, __u32
 			if (last)
 				ret = 2;
 			else {			
-				if (ret && (ogg_h[0] || ogg_h[1] ||ogg_h[2] ||ogg_h[3])) 
+				if (ogg_h[0] || ogg_h[1] ||ogg_h[2] ||ogg_h[3])
 					ret = 0;
 				else {
 					if (zero_space(buf, frame_offset))
@@ -8697,12 +8702,12 @@ void get_file_property(struct found_data_t* this){
 		this->func = file_iso9660 ;
 		strncat(this->name,".iso",7);
 		break;
-	
+
 		case 0x0806     :               //DVD
 	//              this->func = file_DVD ;
 		strncat(this->name,".iso",7);
 		break;
-	
+
 		case 0x0807     :               //9660
 		this->func = file_iso9660 ;
 		strncat(this->name,".iso",7);
@@ -8712,7 +8717,7 @@ void get_file_property(struct found_data_t* this){
 	//              this->func = file_Kernel ;
 	//              strncat(this->name,".Kernel",7);
 		break;
-	
+
 		case 0x0809     :               //boot
 	//              this->func = file_boot ;
 		strncat(this->name,".iso",7);

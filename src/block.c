@@ -92,10 +92,8 @@ void local_ext2fs_extent_free(ext2_extent_handle_t handle)
         if (!handle)
                 return;
 
-//        if (handle->inode)
-//                ext2fs_free_mem(&handle->inode);
         if (handle->path) {
-                for (i=1; i <= handle->max_depth; i++) {
+                for (i=0; i < handle->max_depth; i++) {
                         if (handle->path[i].buf)
                                 ext2fs_free_mem(&handle->path[i].buf);
                 }
@@ -130,7 +128,8 @@ int read_block64 ( ext2_filsys fs, blk64_t *blocknr, void *buf )
 
 
 
-
+//FIXME : Debian Bug #802089 (temporary work around)
+/*
 errcode_t local_ext2fs_extent_open(ext2_filsys fs, struct ext2_inode inode,
                           ext2_extent_handle_t *ret_handle) {
 
@@ -189,7 +188,7 @@ errcode_t local_ext2fs_extent_open(ext2_filsys fs, struct ext2_inode inode,
 
         return 0;
 }
-
+*/
 
 static int mark_extent_block(ext2_filsys fs, char *extent_block ){
 	struct ext3_extent_header 	*eh;
@@ -613,7 +612,10 @@ errcode_t local_block_iterate3(ext2_filsys fs,
 		int			uninit;
 		unsigned int		j;
 
-		ctx.errcode = local_ext2fs_extent_open(fs, inode, &handle);
+//FIXME : Debian Bug #802089 (temporary work around)
+//		ctx.errcode = local_ext2fs_extent_open(fs, inode, &handle);
+		ctx.errcode = ext2fs_extent_open2(fs,0,&inode,&handle);
+//
 		if (ctx.errcode)
 			goto abort_exit;
 

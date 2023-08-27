@@ -20,10 +20,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <sys/stat.h> 
+#include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <utime.h>
+#include <sys/sysmacros.h>
 
 #ifndef O_LARGEFILE
 #define O_LARGEFILE 0
@@ -270,6 +271,10 @@ return retval;
 	if(! strlen(pathname))
 		return 1;
 	buffer = malloc(strlen(pathname) +3);
+    if(!buffer) {
+        fprintf(stderr,"ERROR: can't allocate memory\n");
+        return 1;
+    }
 	strcpy(buffer,pathname);
 	p1 = strrchr(buffer,'/');
 	if (p1)	
@@ -282,8 +287,8 @@ return retval;
 	}
 	else 
 		retval = 0;		
-	if(buffer) free(buffer);		
-	 return retval;
+	free(buffer);
+    return retval;
 }
 
 
@@ -448,6 +453,10 @@ int recover_file( char* des_dir,char* pathname, char* filename, struct ext2_inod
 				if((! inode->i_size) || (inode->i_size >= 60)) 
 					goto errout; 
 				buf = malloc(inode->i_size + 1);
+                if(!buf) {
+                    fprintf(stderr,"ERROR: can't allocate memory\n");
+                    goto errout;
+                }
 				linkname = (char*) &(inode->i_block[0]);
 				for (i = 0; i < inode->i_size ; i++){
 					*(buf+i) = (char) *linkname;
